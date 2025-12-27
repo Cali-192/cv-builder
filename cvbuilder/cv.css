@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --accent: #3b82f6;
+    --sidebar-bg: #0f172a;
+    --input-bg: #1e293b;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    background: #f1f5f9;
+    overflow-x: hidden;
+    /* Përmirësim për Mobile: Ndalon lëvizjet e panevojshme kur rrëshqet gishtin */
+    overscroll-behavior-y: contain;
+}
+
+.main-wrapper { 
+    display: flex; 
+    height: 100vh; 
+}
+
+/* --- EDITOR SIDEBAR --- */
+.editor-sidebar {
+    width: 420px;
+    min-width: 420px;
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}
+
+.editor-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 25px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+/* --- FORM ELEMENTS --- */
+.logo-box { background: var(--accent); padding: 5px 12px; border-radius: 8px; font-weight: 800; }
+.form-control { background: var(--input-bg); border: 1px solid #334155; color: white !important; padding: 10px; }
+.form-control:focus { background: #1e293b; border-color: var(--accent); box-shadow: none; }
+.form-label { color: #94a3b8; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
+
+/* Color Picker */
+.color-btn { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; transition: 0.3s; border: 2px solid transparent; }
+.color-btn.active { border-color: white; transform: scale(1.1); }
+.bg-blue { background: #3b82f6; }
+.bg-red { background: #ef4444; }
+.bg-green { background: #10b981; }
+.bg-gold { background: #f59e0b; }
+.bg-dark { background: #1e293b; }
+
+/* --- PREVIEW ZONE & CV PAGE --- */
+.preview-zone { 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    padding: 40px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start;
+    background: #cbd5e1; 
+}
+
+.cv-page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 0;
+}
+
+/* Dark Mode Template */
+.cv-page.dark-theme { background-color: #0f172a !important; color: #f1f5f9 !important; }
+.cv-page.dark-theme .text-muted { color: #94a3b8 !important; }
+.cv-page.dark-theme .cv-section-title { border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--accent); }
+.cv-page.dark-theme .cv-text, .cv-page.dark-theme #outName { color: #ffffff !important; }
+
+/* CV Content Styling */
+.cv-header-accent { height: 8px; background: var(--accent); width: 100%; }
+.theme-text { color: var(--accent); filter: brightness(0.9); }
+.cv-section-title { font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; border-bottom: 2px solid #f1f5f9; padding-bottom: 5px; margin-bottom: 15px; position: relative; }
+.cv-section-title::after { content: ""; position: absolute; bottom: -2px; left: 0; width: 40px; height: 2px; background: var(--accent); }
+.cv-text { white-space: pre-line; color: #334155; line-height: 1.6; font-size: 0.95rem; }
+
+/* --- FOOTER & BUTTONS --- */
+footer { background: rgba(15, 23, 42, 0.9) !important; backdrop-filter: blur(5px); border-top: 1px solid rgba(255, 255, 255, 0.1) !important; padding: 15px; }
+footer a { color: #facc15 !important; text-decoration: none; font-weight: bold; transition: 0.3s; }
+.btn-download { position: fixed; bottom: 25px; right: 25px; background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: 700; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; }
+
+/* --- MOBILE TABS SYSTEM --- */
+.mobile-tabs { display: none; background: #0f172a; padding: 10px; gap: 10px; position: sticky; top: 0; z-index: 1000; }
+.tab-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #1e293b; color: white; font-weight: bold; font-size: 11px; }
+.tab-btn.active { background: var(--accent); }
+
+/* --- RESPONSIVE LOGIC (RREGULLIMI FINAL) --- */
+@media (max-width: 992px) {
+    .mobile-tabs { display: flex; }
+    .main-wrapper { flex-direction: column; height: auto; min-height: 100vh; }
+    
+    /* Switch Mode */
+    .preview-zone { display: none; padding: 10px !important; background: #f1f5f9; }
+    .main-wrapper.view-mode .preview-zone { display: block !important; }
+    .main-wrapper.view-mode .editor-sidebar { display: none !important; }
+
+    .editor-sidebar { width: 100%; min-width: 100%; height: auto; border-right: none; }
+    .editor-content { max-height: none; overflow: visible; }
+
+    /* CV Letra ne Telefon */
+    .cv-page { 
+        width: 100% !important; 
+        height: auto !important; 
+        min-height: 100vh !important;
+        transform: none !important; 
+        margin: 0 !important; 
+        padding: 15px !important;
+        box-shadow: none;
+    }
+
+    /* Rregullimi i elementeve te brendshme per Mobile */
+    .cv-top-section { flex-direction: column !important; text-align: center; padding: 20px !important; }
+    .cv-top-section .ms-4 { margin-left: 0 !important; margin-top: 15px; }
+    .contact-strip { justify-content: center; gap: 8px !important; }
+    #outImage { width: 100px !important; height: 100px !important; margin: 0 auto; }
+    
+    .btn-download { width: 100%; bottom: 0; right: 0; border-radius: 0; position: fixed; }
+}
+
+/* --- PRINT STYLING --- */
+@media print {
+    .editor-sidebar, .btn-download, footer, .modal, .mobile-tabs { display: none !important; }
+    .main-wrapper { display: block; }
+    .preview-zone { padding: 0; background: white; overflow: visible; display: block !important; }
+    .cv-page { width: 210mm !important; height: 297mm !important; transform: none !important; margin: 0 !important; box-shadow: none; border: none; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+
+.cv-page, .theme-text, .cv-header-accent, .progress-bar {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro CV Builder | Live Editor</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/235/235252.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/235/235252.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/235/235252.png">
+    <link rel="stylesheet" href="cv.css">
+</head>
+<body>
+
+<div class="mobile-tabs d-lg-none">
+    <button class="tab-btn active" id="btnTabEdit" onclick="switchTab('edit')">📝 SHKRUAJ</button>
+    <button class="tab-btn" id="btnTabPreview" onclick="switchTab('view')">👁️ SHIKO CV-në</button>
+</div>
+
+<div class="main-wrapper">
+    <aside class="editor-sidebar d-flex flex-column">
+        <div class="px-3 pt-3 mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span id="lblProgress" class="text-white-50" style="font-size: 10px; letter-spacing: 1px; font-weight: 600;">PLOTËSIMI I CV-SË</span>
+                <span id="progressText" class="text-warning fw-bold" style="font-size: 10px;">0%</span>
+            </div>
+            <div class="progress" style="height: 5px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <div id="progressBar" class="progress-bar bg-warning" role="progressbar" style="width: 0%; transition: 0.6s"></div>
+            </div>
+        </div>
+
+        <div class="header-sidebar mb-4 px-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="d-flex align-items-center">
+                    <div class="logo-box">CV</div>
+                    <h4 class="mb-0 fw-bold text-white ms-2">Pro Builder</h4>
+                </div>
+                <div class="d-flex gap-1">
+                    <button onclick="exportJSON()" class="btn btn-outline-light btn-sm" title="Export Project">💾</button>
+                    <button onclick="document.getElementById('fileInput').click()" class="btn btn-outline-light btn-sm" title="Import Project">📂</button>
+                    <input type="file" id="fileInput" style="display:none" onchange="importJSON(event)" accept=".json">
+                </div>
+            </div>
+            
+            <div class="mb-2">
+                <select id="langSwitcher" class="form-select form-select-sm bg-dark text-white border-secondary shadow-none" onchange="changeAppLanguage(this.value)" style="cursor: pointer; font-size: 12px;">
+                    <option value="sq">🇦🇱 Shqip</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <p id="lblTagline" class="text-white-50 small mb-0">Krijo CV-në tënde profesionale falas.</p>
+                <button onclick="autoFill()" id="btnAutoFill" class="btn btn-link text-warning p-0 small fw-bold" style="text-decoration: none; font-size: 11px;">AUTO FILL ✨</button>
+            </div>
+        </div>
+
+        <div class="editor-content px-3">
+            <div class="mb-4">
+                <label id="lblThemeColor" class="form-label text-white-50 small">Ngjyra e Temës</label>
+                <div class="d-flex gap-2 mb-3">
+                    <div class="color-btn bg-blue active" onclick="changeTheme('#3b82f6', this)"></div>
+                    <div class="color-btn bg-red" onclick="changeTheme('#ef4444', this)"></div>
+                    <div class="color-btn bg-green" onclick="changeTheme('#10b981', this)"></div>
+                    <div class="color-btn bg-gold" onclick="changeTheme('#f59e0b', this)"></div>
+                    <div class="color-btn bg-dark" onclick="changeTheme('#1e293b', this)"></div>
+                </div>
+                
+                <label id="lblTemplateStyle" class="form-label text-white-50 small">Stili i Template-it</label>
+                <div class="d-flex gap-2">
+                    <button onclick="toggleDarkMode(false)" class="btn btn-sm btn-outline-light flex-fill active" id="btnLight">Light</button>
+                    <button onclick="toggleDarkMode(true)" class="btn btn-sm btn-outline-light flex-fill" id="btnDark">Dark Mode 🌙</button>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label id="lblProfilePic" class="form-label">Foto e Profilit</label>
+                <input type="file" class="form-control" onchange="previewImage(event)" accept="image/*">
+            </div>
+
+            <h5 id="sectionTitlePersonal">Të dhënat Personale</h5>
+            <div class="mb-3">
+                <label id="lblFullName" class="form-label text-white-50 small">Emri i Plotë</label>
+                <input type="text" id="inName" class="form-control" oninput="updateCV()" placeholder="Filan Fisteku">
+            </div>
+            <div class="mb-3">
+                <label id="lblJobTitle" class="form-label text-white-50 small">Pozita Profesionale</label>
+                <input type="text" id="inTitle" class="form-control" oninput="updateCV()" placeholder="Software Engineer">
+            </div>
+            
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label id="lblEmail" class="form-label text-white-50 small">Email</label>
+                    <input type="email" id="inEmail" class="form-control" oninput="updateCV()">
+                </div>
+                <div class="col-6 mb-3">
+                    <label id="lblPhone" class="form-label text-white-50 small">Telefoni</label>
+                    <input type="text" id="inPhone" class="form-control" oninput="updateCV()">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6 mb-4">
+                    <label class="form-label text-white-50 small">LinkedIn</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-dark border-secondary text-primary"><i class="fab fa-linkedin"></i></span>
+                        <input type="text" id="inLinkedin" class="form-control bg-dark text-white border-secondary" oninput="updateCV()" placeholder="perdoruesi">
+                    </div>
+                </div>
+                <div class="col-6 mb-4">
+                    <label class="form-label text-white-50 small">GitHub</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-dark border-secondary text-white"><i class="fab fa-github"></i></span>
+                        <input type="text" id="inGithub" class="form-control bg-dark text-white border-secondary" oninput="updateCV()" placeholder="perdoruesi">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <h5 id="sectionTitleContent">Përmbajtja</h5>
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label id="lblAboutMe" class="form-label mb-0">Rreth Meje</label>
+                    <span id="charCount" class="badge" style="font-size: 11px; color: #facc15; background: rgba(250, 204, 21, 0.1);">0 / 250</span>
+                </div>
+                <textarea id="inAbout" class="form-control" rows="3" oninput="updateCV()" maxlength="250" placeholder="..."></textarea>
+            </div>
+            <div class="mb-4">
+                <label id="lblExperience" class="form-label">Përvoja & Edukimi</label>
+                <textarea id="inExp" class="form-control" rows="5" oninput="updateCV()" placeholder="..."></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label id="lblCertificates" class="form-label">Certifikatat & Kursët</label>
+                <textarea id="inCert" class="form-control" rows="3" oninput="updateCV()" placeholder="..."></textarea>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <h5 id="sectionTitleSkills">Aftësitë & Gjuhët</h5>
+            <div class="skill-input-group p-3 mb-3 rounded" style="background: #1e293b;">
+                <label id="lblAddSkill" class="form-label text-white-50">Shto Aftësi</label>
+                <input type="text" id="skillName" class="form-control mb-2" placeholder="Python">
+                <div class="mb-2">
+                    <label id="lblSkillLevel" class="form-label d-flex justify-content-between text-white-50 small">
+                        Niveli <span><b id="skillVal">80</b>%</span>
+                    </label>
+                    <input type="range" id="skillLevel" class="form-range" min="1" max="100" value="80" oninput="document.getElementById('skillVal').innerText = this.value">
+                </div>
+                <button onclick="addSkill()" id="btnAddSkillBtn" class="btn btn-primary btn-sm w-100 fw-bold">SHTO AFTËSINË +</button>
+            </div>
+
+            <div class="p-3 mb-4 rounded" style="background: #1e293b;">
+                <label id="lblAddLang" class="form-label text-white-50">Shto Gjuhë</label>
+                <input type="text" id="langName" class="form-control mb-2" placeholder="English (C1)">
+                <button onclick="addLanguage()" id="btnAddLangBtn" class="btn btn-outline-info btn-sm w-100">SHTO GJUHËN +</button>
+            </div>
+
+            <button onclick="clearAll()" id="btnReset" class="btn btn-outline-danger btn-sm w-100 mt-2 mb-5">FSHIJ TË GJITHA (RESET) 🗑️</button>
+        </div>
+
+        <footer class="mt-auto pt-4 pb-3 text-center border-top border-secondary">
+            <p id="lblDevelopedBy" class="mb-1 text-white-50" style="font-size: 11px;">Dizajnuar & Zhvilluar nga</p>
+            <a href="https://bit.ly/ensarportfolio" target="_blank" class="text-warning fw-bold" style="text-decoration: none; font-size: 13px;">
+                <i class="fas fa-code me-1"></i> Ensar Gashi
+            </a>
+        </footer>
+    </aside>
+
+    <main class="preview-zone">
+        <div id="cv-template" class="cv-page shadow-lg">
+            <div class="cv-header-accent"></div>
+            
+            <div class="cv-top-section d-flex align-items-center p-5">
+                <img id="outImage" src="" alt="Profile" style="width: 130px; height: 130px; object-fit: cover; border-radius: 15px; display: none; border: 3px solid var(--accent);">
+                <div class="ms-4">
+                    <h1 id="outName" class="fw-bold m-0 text-uppercase">FILAN FISTEKU</h1>
+                    <div id="outTitle" class="theme-text fw-semibold fs-4 text-uppercase">SOFTWARE ENGINEER</div>
+                    
+                    <div class="contact-strip mt-3 d-flex flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-envelope theme-text small"></i>
+                            <span id="outEmail" class="text-muted small">email@shembull.com</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-phone theme-text small"></i>
+                            <span id="outPhone" class="text-muted small">+383 44 000 000</span>
+                        </div>
+                        <div id="linkBoxLi" style="display: none;" class="align-items-center gap-2">
+                            <i class="fab fa-linkedin theme-text small"></i>
+                            <span id="outLinkedin" class="text-muted small"></span>
+                        </div>
+                        <div id="linkBoxGh" style="display: none;" class="align-items-center gap-2">
+                            <i class="fab fa-github theme-text small"></i>
+                            <span id="outGithub" class="text-muted small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cv-body-section px-5">
+                <div class="cv-block mb-4">
+                    <h5 id="cvLblProfile" class="cv-section-title">PROFILI</h5>
+                    <div class="cv-text" id="outAbout">Përshkrimi juaj...</div>
+                </div>
+                <div class="cv-block mb-4">
+                    <h5 id="cvLblExp" class="cv-section-title">PËRVOJA & EDUKIMI</h5>
+                    <div class="cv-text" id="outExp">Detajet...</div>
+                </div>
+                <div class="cv-block mb-4">
+                    <h5 id="cvLblCert" class="cv-section-title">CERTIFIKATAT</h5>
+                    <div class="cv-text" id="outCert">...</div>
+                </div>
+                <div class="row">
+                    <div class="col-7">
+                        <h5 id="cvLblSkills" class="cv-section-title">AFTËSITË TEKNIKE</h5>
+                        <div id="outSkills" class="row"></div>
+                    </div>
+                    <div class="col-5">
+                        <h5 id="cvLblLangs" class="cv-section-title">GJUHËT</h5>
+                        <ul id="outLangs" class="list-unstyled d-flex flex-wrap gap-2"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<button onclick="printCV()" id="btnDownloadPDF" class="btn-download shadow">Shkarko si PDF 📥</button>
+
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold text-warning" id="modalTitle">Mirësevini te Pro CV Builder ✨</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-4" id="modalBody">
+                <p>Krijoni CV-në tuaj profesionale në kohë reale! Plotësoni të dhënat në të majtë dhe shikoni rezultatin menjëherë.</p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-primary w-100 fw-bold" data-bs-dismiss="modal" id="btnModalClose">FILLONI TANI</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="cv.js"></script>
+</body>
+</html>
